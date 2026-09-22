@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.express as px
 
 # ------------------------------------------------------------
@@ -87,9 +88,29 @@ insight_box("insight_1_genre_donut")
 st.divider()
 
 # ------------------------------------------------------------
-# 2. 총 관객수 분포 - 히스토그램
+# 2. 장르 안의 영화들 - 트리맵 (칸 크기 = 총 관객수)
 # ------------------------------------------------------------
-st.header("2️⃣ 총 관객수 분포")
+st.header("2️⃣ 장르 안의 영화들 (칸 크기 = 총 관객수)")
+
+fig_treemap = px.treemap(
+    df,
+    path=["genre", "movieNm"],
+    values="total_audi",
+    title="장르 안의 영화들 - 칸 크기는 총 관객수",
+)
+fig_treemap.update_traces(
+    hovertemplate="영화명: %{label}<br>총 관객수: %{value:,}명<extra></extra>",
+)
+
+st.plotly_chart(fig_treemap, use_container_width=True)
+insight_box("insight_2_genre_treemap")
+
+st.divider()
+
+# ------------------------------------------------------------
+# 3. 총 관객수 분포 - 히스토그램
+# ------------------------------------------------------------
+st.header("3️⃣ 총 관객수 분포")
 
 fig_hist_audi = px.histogram(
     df,
@@ -104,14 +125,31 @@ fig_hist_audi.update_traces(
 fig_hist_audi.update_layout(yaxis_title="영화 편수")
 
 st.plotly_chart(fig_hist_audi, use_container_width=True)
+
+# 대부분의 영화가 몰려 있는 구간과, 가장 관객이 많은 영화를 자동으로 계산
+counts, bin_edges = np.histogram(df["total_audi"].dropna(), bins=30)
+mode_idx = counts.argmax()
+mode_low, mode_high = bin_edges[mode_idx], bin_edges[mode_idx + 1]
+
+top_row = df.loc[df["total_audi"].idxmax()]
+top_movie = top_row["movieNm"]
+top_audi = top_row["total_audi"]
+
+st.info(
+    f"📌 전체 216편 중 **{int(counts[mode_idx])}편**이 총 관객수 "
+    f"**{mode_low:,.0f}명 ~ {mode_high:,.0f}명** 구간에 몰려 있습니다.  \n"
+    f"📌 가장 많은 관객을 동원한 영화는 **'{top_movie}'**이며, "
+    f"총 **{top_audi:,.0f}명**을 기록했습니다."
+)
+
 insight_box("insight_2_audi_hist")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 3. 제작 국가별 영화 편수 - 막대 그래프
+# 4. 제작 국가별 영화 편수 - 막대 그래프
 # ------------------------------------------------------------
-st.header("3️⃣ 제작 국가별 영화 편수")
+st.header("4️⃣ 제작 국가별 영화 편수")
 
 nation_counts = df["nation"].value_counts().reset_index()
 nation_counts.columns = ["nation", "count"]
@@ -128,14 +166,14 @@ fig_bar_nation.update_traces(
 )
 
 st.plotly_chart(fig_bar_nation, use_container_width=True)
-insight_box("insight_3_nation_bar")
+insight_box("insight_4_nation_bar")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 4. 개봉일 스크린수 vs 총 관객수 - 산점도
+# 5. 개봉일 스크린수 vs 총 관객수 - 산점도
 # ------------------------------------------------------------
-st.header("4️⃣ 개봉일 스크린수와 총 관객수의 관계")
+st.header("5️⃣ 개봉일 스크린수와 총 관객수의 관계")
 
 fig_scatter_scrn = px.scatter(
     df,
@@ -150,14 +188,14 @@ fig_scatter_scrn.update_traces(
 )
 
 st.plotly_chart(fig_scatter_scrn, use_container_width=True)
-insight_box("insight_4_scrn_scatter")
+insight_box("insight_5_scrn_scatter")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 5. 개봉 첫 주 관객수 vs 총 관객수 - 산점도
+# 6. 개봉 첫 주 관객수 vs 총 관객수 - 산점도
 # ------------------------------------------------------------
-st.header("5️⃣ 개봉 첫 주 관객수와 총 관객수의 관계")
+st.header("6️⃣ 개봉 첫 주 관객수와 총 관객수의 관계")
 
 fig_scatter_week = px.scatter(
     df,
@@ -172,14 +210,14 @@ fig_scatter_week.update_traces(
 )
 
 st.plotly_chart(fig_scatter_week, use_container_width=True)
-insight_box("insight_5_week_scatter")
+insight_box("insight_6_week_scatter")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 6. 박스오피스 10위권 유지 일수 분포 - 히스토그램
+# 7. 박스오피스 10위권 유지 일수 분포 - 히스토그램
 # ------------------------------------------------------------
-st.header("6️⃣ 박스오피스 10위권 유지 일수 분포")
+st.header("7️⃣ 박스오피스 10위권 유지 일수 분포")
 
 fig_hist_days = px.histogram(
     df,
@@ -194,4 +232,4 @@ fig_hist_days.update_traces(
 fig_hist_days.update_layout(yaxis_title="영화 편수")
 
 st.plotly_chart(fig_hist_days, use_container_width=True)
-insight_box("insight_6_days_hist")
+insight_box("insight_7_days_hist")
