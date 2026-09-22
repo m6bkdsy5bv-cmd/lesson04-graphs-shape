@@ -147,9 +147,32 @@ insight_box("insight_2_audi_hist")
 st.divider()
 
 # ------------------------------------------------------------
-# 4. 제작 국가별 영화 편수 - 막대 그래프
+# 4. 개봉일 스크린수 vs 총 관객수 - 산점도 (장르별 색 구분)
 # ------------------------------------------------------------
-st.header("4️⃣ 제작 국가별 영화 편수")
+st.header("4️⃣ 개봉일 스크린수와 총 관객수의 관계")
+
+fig_scatter_scrn = px.scatter(
+    df,
+    x="first_scrn",
+    y="total_audi",
+    color="genre",
+    hover_name="movieNm",
+    title="개봉일 스크린수와 총 관객수의 관계 (장르별 색 구분)",
+    labels={"first_scrn": "개봉일 스크린수", "total_audi": "총 관객수(명)", "genre": "장르"},
+)
+fig_scatter_scrn.update_traces(
+    hovertemplate="영화명: %{hovertext}<br>스크린수: %{x}<br>총 관객수: %{y}<extra></extra>"
+)
+
+st.plotly_chart(fig_scatter_scrn, use_container_width=True)
+insight_box("insight_4_scrn_scatter")
+
+st.divider()
+
+# ------------------------------------------------------------
+# 5. 제작 국가별 영화 편수 - 막대 그래프
+# ------------------------------------------------------------
+st.header("5️⃣ 제작 국가별 영화 편수")
 
 nation_counts = df["nation"].value_counts().reset_index()
 nation_counts.columns = ["nation", "count"]
@@ -166,29 +189,7 @@ fig_bar_nation.update_traces(
 )
 
 st.plotly_chart(fig_bar_nation, use_container_width=True)
-insight_box("insight_4_nation_bar")
-
-st.divider()
-
-# ------------------------------------------------------------
-# 5. 개봉일 스크린수 vs 총 관객수 - 산점도
-# ------------------------------------------------------------
-st.header("5️⃣ 개봉일 스크린수와 총 관객수의 관계")
-
-fig_scatter_scrn = px.scatter(
-    df,
-    x="first_scrn",
-    y="total_audi",
-    hover_name="movieNm",
-    title="개봉일 스크린수와 총 관객수의 관계",
-    labels={"first_scrn": "개봉일 스크린수", "total_audi": "총 관객수(명)"},
-)
-fig_scatter_scrn.update_traces(
-    hovertemplate="영화명: %{hovertext}<br>스크린수: %{x}<br>총 관객수: %{y}<extra></extra>"
-)
-
-st.plotly_chart(fig_scatter_scrn, use_container_width=True)
-insight_box("insight_5_scrn_scatter")
+insight_box("insight_5_nation_bar")
 
 st.divider()
 
