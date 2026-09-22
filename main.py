@@ -231,9 +231,28 @@ insight_box("insight_6_scrn_bubble")
 st.divider()
 
 # ------------------------------------------------------------
-# 7. 제작 국가별 영화 편수 - 막대 그래프
+# 7. 국가 -> 장르 - 선버스트 그래프 (칸 크기 = 영화 편수)
 # ------------------------------------------------------------
-st.header("7️⃣ 제작 국가별 영화 편수")
+st.header("7️⃣ 제작 국가별 장르 구성 (칸 크기 = 영화 편수)")
+
+fig_sunburst = px.sunburst(
+    df,
+    path=["nation", "genre"],
+    title="제작 국가 -> 장르 (칸 크기: 영화 편수)",
+)
+fig_sunburst.update_traces(
+    hovertemplate="%{label}<br>편수: %{value}편<extra></extra>"
+)
+
+st.plotly_chart(fig_sunburst, use_container_width=True)
+insight_box("insight_7_nation_genre_sunburst")
+
+st.divider()
+
+# ------------------------------------------------------------
+# 8. 제작 국가별 영화 편수 - 막대 그래프
+# ------------------------------------------------------------
+st.header("8️⃣ 제작 국가별 영화 편수")
 
 nation_counts = df["nation"].value_counts().reset_index()
 nation_counts.columns = ["nation", "count"]
@@ -250,14 +269,14 @@ fig_bar_nation.update_traces(
 )
 
 st.plotly_chart(fig_bar_nation, use_container_width=True)
-insight_box("insight_7_nation_bar")
+insight_box("insight_8_nation_bar")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 8. 개봉 첫 주 관객수 vs 총 관객수 - 산점도
+# 9. 개봉 첫 주 관객수 vs 총 관객수 - 산점도
 # ------------------------------------------------------------
-st.header("8️⃣ 개봉 첫 주 관객수와 총 관객수의 관계")
+st.header("9️⃣ 개봉 첫 주 관객수와 총 관객수의 관계")
 
 fig_scatter_week = px.scatter(
     df,
@@ -272,14 +291,14 @@ fig_scatter_week.update_traces(
 )
 
 st.plotly_chart(fig_scatter_week, use_container_width=True)
-insight_box("insight_8_week_scatter")
+insight_box("insight_9_week_scatter")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 9. 박스오피스 10위권 유지 일수 분포 - 히스토그램
+# 10. 박스오피스 10위권 유지 일수 분포 - 히스토그램
 # ------------------------------------------------------------
-st.header("9️⃣ 박스오피스 10위권 유지 일수 분포")
+st.header("🔟 박스오피스 10위권 유지 일수 분포")
 
 fig_hist_days = px.histogram(
     df,
@@ -294,4 +313,4 @@ fig_hist_days.update_traces(
 fig_hist_days.update_layout(yaxis_title="영화 편수")
 
 st.plotly_chart(fig_hist_days, use_container_width=True)
-insight_box("insight_9_days_hist")
+insight_box("insight_10_days_hist")
