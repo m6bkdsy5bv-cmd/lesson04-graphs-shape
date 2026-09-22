@@ -170,9 +170,36 @@ insight_box("insight_4_scrn_scatter")
 st.divider()
 
 # ------------------------------------------------------------
-# 5. 제작 국가별 영화 편수 - 막대 그래프
+# 5. 영화 10편 이상 장르의 총 관객수 - 박스플롯
 # ------------------------------------------------------------
-st.header("5️⃣ 제작 국가별 영화 편수")
+st.header("5️⃣ 장르별 총 관객수 분포 (영화 10편 이상 장르만)")
+
+genre_movie_counts = df["genre"].value_counts()
+major_genres = genre_movie_counts[genre_movie_counts >= 10].index
+df_major_genre = df[df["genre"].isin(major_genres)]
+
+fig_box_genre = px.box(
+    df_major_genre,
+    x="genre",
+    y="total_audi",
+    points="outliers",
+    hover_name="movieNm",
+    title="장르별 총 관객수 분포 (영화 10편 이상 장르만)",
+    labels={"genre": "장르", "total_audi": "총 관객수(명)"},
+)
+fig_box_genre.update_traces(
+    hovertemplate="영화명: %{hovertext}<br>총 관객수: %{y}<extra></extra>"
+)
+
+st.plotly_chart(fig_box_genre, use_container_width=True)
+insight_box("insight_5_genre_box")
+
+st.divider()
+
+# ------------------------------------------------------------
+# 6. 제작 국가별 영화 편수 - 막대 그래프
+# ------------------------------------------------------------
+st.header("6️⃣ 제작 국가별 영화 편수")
 
 nation_counts = df["nation"].value_counts().reset_index()
 nation_counts.columns = ["nation", "count"]
@@ -189,14 +216,14 @@ fig_bar_nation.update_traces(
 )
 
 st.plotly_chart(fig_bar_nation, use_container_width=True)
-insight_box("insight_5_nation_bar")
+insight_box("insight_6_nation_bar")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 6. 개봉 첫 주 관객수 vs 총 관객수 - 산점도
+# 7. 개봉 첫 주 관객수 vs 총 관객수 - 산점도
 # ------------------------------------------------------------
-st.header("6️⃣ 개봉 첫 주 관객수와 총 관객수의 관계")
+st.header("7️⃣ 개봉 첫 주 관객수와 총 관객수의 관계")
 
 fig_scatter_week = px.scatter(
     df,
@@ -211,14 +238,14 @@ fig_scatter_week.update_traces(
 )
 
 st.plotly_chart(fig_scatter_week, use_container_width=True)
-insight_box("insight_6_week_scatter")
+insight_box("insight_7_week_scatter")
 
 st.divider()
 
 # ------------------------------------------------------------
-# 7. 박스오피스 10위권 유지 일수 분포 - 히스토그램
+# 8. 박스오피스 10위권 유지 일수 분포 - 히스토그램
 # ------------------------------------------------------------
-st.header("7️⃣ 박스오피스 10위권 유지 일수 분포")
+st.header("8️⃣ 박스오피스 10위권 유지 일수 분포")
 
 fig_hist_days = px.histogram(
     df,
@@ -233,4 +260,4 @@ fig_hist_days.update_traces(
 fig_hist_days.update_layout(yaxis_title="영화 편수")
 
 st.plotly_chart(fig_hist_days, use_container_width=True)
-insight_box("insight_7_days_hist")
+insight_box("insight_8_days_hist")
